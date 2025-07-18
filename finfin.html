@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>pokemon</title>
+  <link rel="stylesheet" href="pok.css">
+</head>
+<body>
+  <H1 class="h">POKEMON</H1>
+
+<div class="input">
+  <input type="search" id="search" placeholder="entre pokemon">
+</div>
+<ul id="pokedex"></ul>
+<button id="loadMore">Load More</button>
+<main>
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn"> </span>
+    <div id="modal-body"></div>
+    <div class="credte"> </div>
+  </div>
+</div>
+</main>
+
+
+<script>
+const pokedex = document.getElementById('pokedex'),
+      loadMore = document.getElementById('loadMore'),
+      searchInput = document.getElementById('search'),
+      modal = document.getElementById('modal'),
+      modalBody = document.getElementById('modal-body'),
+      closeBtn = document.querySelector('.close-btn');
+
+let allPokemon = [], offset=3, limit=200;
+
+const typeColors = {
+  fire:"#FDDFDF", grass:"#DEFDE0", electric:"#FCF7DE", water:"#DEF3FD",
+  ground:"#f4e7da", rock:"#d5d5d4", fairy:"#fceaff", poison:"#98d7a5",
+  bug:"#f8d5a3", dragon:"#97b3e6", psychic:"#eaeda1", flying:"#F5F5F5",
+  fighting:"#E6E0D4", normal:"#F5F5F5"
+};
+
+// Pagination + Batch loading
+async function loadPage() {
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`);
+  const { results } = await res.json();
+  const batch = await Promise.all(results.map(r=>fetch(r.url).then(r=>r.json())));
+  batch.forEach(p=>allPokemon.push(p));
+  displayPokemon(filterList(allPokemon, searchInput.value));
+  offset += limit;
+  if(results.length < limit) loadMore.style.display='none';
+}
+
+// Show cards
+function displayPokemon(list) {
+  pokedex.innerHTML = list.map(p=>{
+    const color = typeColors[p.types[0].type.name]||'#eee';
+    const typeTags = p.types.map(t=>`<span class="poke-type" style="background:${typeColors[t.type.name]};">${t.type.name}</span>`).join('');
+    return `<li class="card" data-id="${p.id}" style="background:${color}">
+      <img src="${p.sprites.front_default}" alt="${p.name}">
+      <h3>#${p.id.toString().padStart(3,'0')} ${p.name}</h3>
+      <p>${typeTags}</p>
+    </li>`;
+  }).join('');
+  document.querySelectorAll('.card').forEach(card=>{
+    card.onclick = ()=> { 
+      const p = allPokemon.find(x=>x.id==card.dataset.id);
+      showModal(p);
+    };
+  });
+}
+
+// Modal content afiche le carte 
+
+function showModal(p) {
+  const types = p.types.map(t=>t.type.name).join(', ');
+  const abilities = p.abilities.map(a=>a.ability.name).join(', ');
+  modalBody.innerHTML = `
+    <img src="${p.sprites.other.showdown.
+front_default}" alt="${p.name}">
+    <h2>${p.name} (#${p.id})</h2>
+    <p>Types: ${types}</p>
+    <p>Height: ${p.height} | Weight: ${p.weight}</p>
+    <p>Abilities: ${abilities}</p>`;
+  modal.classList.add('open');
+}
+
+// Filtering search
+function filterList(list, term) {
+  term = term.trim().toLowerCase();
+  return list.filter(p => 
+    p.name.includes(term) || p.id.toString().includes(term)
+  );
+}
+
+// Event listeners
+searchInput.addEventListener('input',()=>displayPokemon(filterList(allPokemon, searchInput.value)));
+loadMore.addEventListener('click',loadPage);
+closeBtn.onclick = ()=>modal.classList.remove('open');
+modal.onclick = e=>{ if(e.target===modal) modal.classList.remove('open'); };
+
+// Initial load
+loadPage();
+</script>
+
+</body>
+</html>

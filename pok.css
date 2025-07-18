@@ -1,0 +1,96 @@
+body { 
+    font-family: sans-serif;
+     padding: 20px; }
+.input{
+    display: flex;
+    justify-content: center;
+}
+.h{
+     display: flex;
+    justify-content: center;
+
+}
+    #search {
+     
+         border: 3px solid #0D152B; 
+         margin-bottom: 28px;
+          padding: 10px;
+           width:100%;
+           max-width:400px;}
+    #pokedex {
+         display:grid;
+         grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+         gap:12px; 
+         list-style:none;
+         padding:0;}
+    .card { background:#f9f9f9;
+        border-radius:8px;
+        padding:8px;
+        text-align:center;
+        cursor:pointer;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            transition:0.2s;}
+    .card:hover { 
+        transform:translateY(-4px);
+        box-shadow:0 4px 8px rgba(0,0,0,0.1); }
+    .card img { 
+        width:96px;
+        height:96px; }
+    .poke-type {
+         font-size:12px;
+         padding:2px 6px;
+         margin:2px;
+         border-radius:4px;
+         color:rgb(214, 14, 14);
+         display:inline-block; }
+    #loadMore { 
+        padding:8px 16px;
+        margin:16px auto;
+        display:block; }
+    .modal {
+         display:none;position:fixed;
+         inset:0;background:rgba(26, 25, 25, 0.7);
+         align-items:center;
+         justify-content:center; }
+    .modal.open { 
+        display:flex;
+         justify-content: center;
+         background:rgb(234, 219, 219);
+     }
+    .modal-content { 
+        background:rgb(238, 188, 188);
+        padding:60px;
+        border-radius:30px;
+        min-width:500px;
+        right: 50px;
+        position:relative; 
+        display: flex;
+    justify-content: center;
+    }
+.grid {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+        
+   
+    .close-btn {
+         position:absolute;
+         top:10px;
+         right:10px;
+         cursor:pointer;
+         font-size:20px; }
+
+    h1{
+        counter-reset: inherit;
+    }
+
+
+
+
+
+   
